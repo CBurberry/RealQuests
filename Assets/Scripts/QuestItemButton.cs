@@ -17,7 +17,6 @@ public class QuestItemButton : MonoBehaviour
     private GameObject rewardTextElement;
 
     //Data references
-    [SerializeField]
     private Quest quest;
 
     public void SetData(Quest quest)
