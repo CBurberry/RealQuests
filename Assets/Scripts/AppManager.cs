@@ -31,6 +31,8 @@ public class AppManager : MonoBehaviour
             Debug.LogWarning("Duplicate instances of " + typeof(AppManager) + " detected! Deleting duplicate.");
             Destroy(this);
         }
+
+        DontDestroyOnLoad(this);
     }
 
     private void Start()
