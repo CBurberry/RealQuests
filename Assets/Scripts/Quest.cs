@@ -1,7 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Quest", menuName = "ScriptableObjects/Quest", order = 1)]
-public class Quest : ScriptableObject
+public class Quest
 {
     public string Title;
     public Reward[] Rewards; 

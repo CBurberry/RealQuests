@@ -32,6 +32,12 @@ public class SaveSystem : MonoBehaviour
         DontDestroyOnLoad(this);
     }
 
+    public void AddQuest(Quest quest)
+    {
+        Data.ActiveQuests.Add(quest);
+        Save();
+    }
+
     public void Save()
     {
         string jsonData = JsonConvert.SerializeObject(Data);
@@ -48,6 +54,7 @@ public class SaveSystem : MonoBehaviour
             {
                 string jsonData = File.ReadAllText(fullPath);
                 Data = JsonConvert.DeserializeObject<SaveData>(jsonData);
+                Debug.Log("Loaded save data from file.");
             }
             catch (Exception ex)
             {

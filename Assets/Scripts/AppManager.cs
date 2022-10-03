@@ -42,8 +42,24 @@ public class AppManager : MonoBehaviour
 
     public void AddNewQuestItem(string title, RewardType rewardType, int count)
     {
-        Debug.LogWarning(nameof(AppManager) + ":" + nameof(AddNewQuestItem));
-        //TODO - Create a new quest SO, serialize it, save it, and add it to the UI layout group.
+        //Create new quest data
+        Quest quest = new Quest();
+        quest.Title = title;
+        quest.Rewards = new Reward[]
+        {
+            new Reward
+            {
+                Type = rewardType,
+                Count = count
+            } 
+        };
+
+        //Add to save data
+        SaveSystem.Instance.AddQuest(quest);
+
+        //Update UI scrollview with new element
+        var questsPanel = activePanel.GetComponent<QuestsPanel>();
+        questsPanel.RefreshQuests();
     }
 
     public void SetPanelActive(int targetIndex)

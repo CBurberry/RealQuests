@@ -37,6 +37,10 @@ public class CreateQuestPanel : MonoBehaviour
         backButton.SetActive(true);
         addNewQuestButton.SetActive(true);
         gameObject.SetActive(false);
+
+        titleInput.text = string.Empty;
+        rewardCountInput.text = string.Empty;
+
         AppManager.Instance.AddNewQuestItem(titleInput.text, RewardType.LuxuryToken, count);
     }
 }
