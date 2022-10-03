@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SaveSystem : MonoBehaviour
@@ -36,6 +37,28 @@ public class SaveSystem : MonoBehaviour
     {
         Data.ActiveQuests.Add(quest);
         Save();
+    }
+
+    public void RemoveQuest(Quest quest)
+    {
+        Data.ActiveQuests.Remove(quest);
+        Save();
+    }
+
+    public void AddRewards(Reward[] rewards)
+    {
+        //Find the corresponding entry and add count, or add a the entry if it doesnt exist.
+        foreach (var reward in rewards)
+        {
+            if (Data.OwnedRewards.Any(x => x.Type == reward.Type))
+            {
+                Data.OwnedRewards.First(x => x.Type == reward.Type).Count += reward.Count;
+            }
+            else 
+            {
+                Data.OwnedRewards.Add(reward);
+            }
+        }
     }
 
     public void Save()
@@ -74,6 +97,8 @@ public class SaveSystem : MonoBehaviour
     {
         Data = new SaveData();
         Data.ActiveQuests = new List<Quest>();
+        Data.RepeatableQuests = new List<Quest>();
+        Data.CompletedQuests = new List<Quest>();
         Data.OwnedRewards = new List<Reward>();
 
         //Save the new data so we have an initial copy in the filesystem
@@ -90,5 +115,7 @@ public class SaveSystem : MonoBehaviour
 public struct SaveData
 {
     public List<Quest> ActiveQuests;
+    public List<Quest> RepeatableQuests;
+    public List<Quest> CompletedQuests;
     public List<Reward> OwnedRewards;
 }

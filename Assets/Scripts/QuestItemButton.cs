@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,8 +14,18 @@ public class QuestItemButton : MonoBehaviour
     [SerializeField]
     private GameObject rewardTextElement;
 
-    //Data references
+    //References
+    private QuestsPanel questsPanel;
     private Quest quest;
+
+    private void Start()
+    {
+        if (Application.isPlaying) 
+        {
+            var gameObject = GameObject.Find("QuestsPanel");
+            questsPanel = gameObject.GetComponent<QuestsPanel>();
+        }
+    }
 
     public void SetData(Quest quest)
     {
@@ -35,8 +43,9 @@ public class QuestItemButton : MonoBehaviour
 
     public void OnClick()
     {
-        //TODO
-        Debug.LogWarning("QuestItem: '" + titleText.text + "' clicked!");
+        questsPanel.SetSelectedQuest(quest);
+        questsPanel.SetFooterButtonsActive(false);
+        questsPanel.SetQuestSelectionPanelActive(true);
     }
 
     private void DropLayoutGroupChildren()

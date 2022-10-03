@@ -11,6 +11,15 @@ public class QuestsPanel : MonoBehaviour
     [SerializeField]
     private GameObject questsItemPrefab;
 
+    [SerializeField]
+    private GameObject backButton;
+    [SerializeField]
+    private GameObject addNewQuestButton;
+    [SerializeField]
+    private GameObject createQuestPanel;
+    [SerializeField]
+    private GameObject questSelectionPanel;
+
     public void RefreshQuests()
     {
         //Drop all child elements
@@ -22,6 +31,34 @@ public class QuestsPanel : MonoBehaviour
             var questItemButton = Instantiate(questsItemPrefab, layoutGroup.transform).GetComponent<QuestItemButton>();
             questItemButton.SetData(quest);
         }
+    }
+
+    public Quest GetSelectedQuest()
+    {
+        return questSelectionPanel.GetComponent<QuestSelectionPanel>().Quest;
+    }
+
+    public void SetSelectedQuest(Quest quest)
+    {
+        var component = questSelectionPanel.GetComponent<QuestSelectionPanel>();
+        component.Quest = quest;
+        component.SetTitle("Complete Quest '" + quest.Title + "'?");
+    }
+
+    public void SetFooterButtonsActive(bool value)
+    {
+        backButton.SetActive(value);
+        addNewQuestButton.SetActive(value);
+    }
+
+    public void SetCreateQuestPanelActive(bool value)
+    {
+        createQuestPanel.SetActive(value);
+    }
+
+    public void SetQuestSelectionPanelActive(bool value)
+    {
+        questSelectionPanel.SetActive(value);
     }
 
     private void DropLayoutGroupChildren()
