@@ -47,7 +47,7 @@ public class QuestItemButton : MonoBehaviour
         GameObject[] allChildren = new GameObject[rewardsLayoutGroup.gameObject.transform.childCount];
 
         //Find all child obj and store to that array
-        foreach (Transform child in transform)
+        foreach (Transform child in rewardsLayoutGroup.gameObject.transform)
         {
             allChildren[i] = child.gameObject;
             i += 1;

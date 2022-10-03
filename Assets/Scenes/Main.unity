@@ -1291,6 +1291,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   layoutGroup: {fileID: 2063845711}
+  questsItemPrefab: {fileID: 170895702213711968, guid: 811a05ab61e350a4586a6e6f7f9b4dbd, type: 3}
 --- !u!1 &815045445
 GameObject:
   m_ObjectHideFlags: 0
@@ -2793,6 +2794,18 @@ MonoBehaviour:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 759454339}
+        m_TargetAssemblyTypeName: QuestsPanel, Assembly-CSharp
+        m_MethodName: RefreshQuests
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
