@@ -59,6 +59,41 @@ public class SaveSystem : MonoBehaviour
                 Data.OwnedRewards.Add(reward);
             }
         }
+
+        Save();
+    }
+
+    public int GetRewardCount(RewardType type)
+    {
+        var reward = Data.OwnedRewards.FirstOrDefault(x => x.Type == type);
+        return (reward != null) ? reward.Count : 0;
+    }
+
+    public bool HasRewards(RewardType type, int count)
+    {
+        return Data.OwnedRewards.Any(x => x.Type == type && x.Count >= count);
+    }
+
+    public void ConsumeReward(RewardType type, int count)
+    {
+        //Check there is a sufficient availablity
+        if (!HasRewards(type, count))
+        {
+            return;
+        }
+
+        //Either decrement the count or remove the reward item outright.
+        var reward = Data.OwnedRewards.First(x => x.Type == type);
+        if (reward.Count > count)
+        {
+            reward.Count -= count;
+        }
+        else if (reward.Count == count)
+        {
+            Data.OwnedRewards.Remove(reward);
+        }
+
+        Save();
     }
 
     public void Save()
