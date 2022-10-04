@@ -98,7 +98,7 @@ public class SaveSystem : MonoBehaviour
 
     public void Save()
     {
-        string jsonData = JsonConvert.SerializeObject(Data);
+        string jsonData = JsonConvert.SerializeObject(Data, Formatting.Indented);
         File.WriteAllText(fullPath, jsonData);
         Debug.Log("Saved data.");
     }
