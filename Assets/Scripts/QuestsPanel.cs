@@ -61,6 +61,11 @@ public class QuestsPanel : MonoBehaviour
         questSelectionPanel.SetActive(value);
     }
 
+    public void SetQuestItemsPanelActive(bool value)
+    {
+        layoutGroup.SetActive(value);
+    }
+
     private void DropLayoutGroupChildren()
     {
         int i = 0;

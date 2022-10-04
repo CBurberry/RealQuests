@@ -21,6 +21,9 @@ public class CreateQuestPanel : MonoBehaviour
     [SerializeField]
     private GameObject addNewQuestButton;
 
+    [SerializeField]
+    private GameObject questItemsGroup;
+
     public void CreateQuest()
     {
         if (string.IsNullOrWhiteSpace(titleInput.text)) 
@@ -36,6 +39,7 @@ public class CreateQuestPanel : MonoBehaviour
 
         backButton.SetActive(true);
         addNewQuestButton.SetActive(true);
+        questItemsGroup.SetActive(true);
         gameObject.SetActive(false);
 
         AppManager.Instance.AddNewQuestItem(titleInput.text, RewardType.LuxuryToken, count);
