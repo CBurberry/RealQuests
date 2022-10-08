@@ -39,6 +39,18 @@ public class SaveSystem : MonoBehaviour
         Save();
     }
 
+    public void ModifyQuest(Guid entryToEdit, Quest editedEntry)
+    {
+        if (editedEntry.Id != entryToEdit)
+        {
+            return;
+        }
+
+        var entry = Data.ActiveQuests.First(x => x.Id == entryToEdit);
+        entry = editedEntry;
+        Save();
+    }
+
     public void RemoveQuest(Quest quest)
     {
         Data.ActiveQuests.Remove(quest);

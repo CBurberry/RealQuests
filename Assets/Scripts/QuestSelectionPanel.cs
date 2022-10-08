@@ -26,6 +26,8 @@ public class QuestSelectionPanel : MonoBehaviour
     //References
     [SerializeField]
     private QuestsPanel questsPanel;
+    [SerializeField]
+    private CreateEditQuestPanel createEditQuestPanel;
 
     public void SetTitle(string title)
     {
@@ -52,6 +54,13 @@ public class QuestSelectionPanel : MonoBehaviour
         //Update quest view
         questsPanel.RefreshQuests();
         Close();
+    }
+
+    public void EditQuest()
+    {
+        gameObject.SetActive(false);
+        createEditQuestPanel.WindowMode = CreateEditQuestPanel.Mode.Edit;
+        createEditQuestPanel.gameObject.SetActive(true);
     }
 
     public void DeleteQuest()

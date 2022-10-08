@@ -53,6 +53,21 @@ public class QuestsPanel : MonoBehaviour
 
     public void SetCreateQuestPanelActive(bool value)
     {
+        if (value) 
+        {
+            createQuestPanel.GetComponent<CreateEditQuestPanel>().WindowMode = CreateEditQuestPanel.Mode.Create;
+        }
+
+        createQuestPanel.SetActive(value);
+    }
+
+    public void SetEditQuestPanelActive(bool value)
+    {
+        if (value)
+        {
+            createQuestPanel.GetComponent<CreateEditQuestPanel>().WindowMode = CreateEditQuestPanel.Mode.Edit;
+        }
+
         createQuestPanel.SetActive(value);
     }
 

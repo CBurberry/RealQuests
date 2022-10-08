@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class AppManager : MonoBehaviour
@@ -56,6 +58,15 @@ public class AppManager : MonoBehaviour
 
         //Add to save data
         SaveSystem.Instance.AddQuest(quest);
+
+        //Update UI scrollview with new element
+        var questsPanel = activePanel.GetComponent<QuestsPanel>();
+        questsPanel.RefreshQuests();
+    }
+
+    public void EditQuestItem(Guid entryToEdit, Quest editedEntry)
+    {
+        SaveSystem.Instance.ModifyQuest(entryToEdit, editedEntry);
 
         //Update UI scrollview with new element
         var questsPanel = activePanel.GetComponent<QuestsPanel>();
