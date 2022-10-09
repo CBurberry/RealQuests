@@ -28,24 +28,40 @@ public class QuestSelectionPanel : MonoBehaviour
     private QuestsPanel questsPanel;
     [SerializeField]
     private CreateEditQuestPanel createEditQuestPanel;
+    [SerializeField]
+    private Button completeButton;
 
-    public void SetTitle(string title)
+    private void OnEnable()
     {
-        titleText.text = title;
+        if (Quest.IsInCooldown())
+        {
+            titleText.text = "Modify/Delete Quest '" + Quest.Title + "'?";
+        }
+        else 
+        {
+            titleText.text = "Complete Quest '" + Quest.Title + "'?";
+        }
+
+        completeButton.gameObject.SetActive(!Quest.IsInCooldown());
     }
 
     public void CompleteQuest()
     {
-        Quest.Completions++;
-        if (!Quest.IsRepeatable) 
+        //Remove quest from active quests list to completed quests 
+        if (!SaveSystem.Data.ActiveQuests.Remove(Quest))
         {
-            //Remove quest from active quests list to completed quests 
-            if (!SaveSystem.Data.ActiveQuests.Remove(Quest))
-            {
-                throw new InvalidOperationException("Could remove quest from active quests!");
-            }
+            throw new InvalidOperationException("Could remove quest from active quests!");
+        }
 
+        Quest.Completions++;
+        if (!Quest.IsRepeatable)
+        {
             SaveSystem.Data.CompletedQuests.Add(Quest);
+        }
+        else 
+        {
+            Quest.LastCompleted = DateTime.Now;
+            SaveSystem.Data.RepeatableQuests.Add(Quest);
         }
 
         //Credit rewards to owned rewards

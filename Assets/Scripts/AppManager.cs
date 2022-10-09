@@ -21,6 +21,10 @@ public class AppManager : MonoBehaviour
 
     private GameObject activePanel;
 
+    //Check for repeatable quests cooldowns once every minute.
+    private float repeatableQuestCheckDelay = 60f;
+    private float repeatableQuestCheckTimer = 0f;
+
     //Singleton pattern
     private void Awake()
     {
@@ -42,20 +46,22 @@ public class AppManager : MonoBehaviour
         SetPanelActive(0);
     }
 
-    public void AddNewQuestItem(string title, RewardType rewardType, int count)
+    private void Update()
     {
-        //Create new quest data
-        Quest quest = new Quest();
-        quest.Title = title;
-        quest.Rewards = new Reward[]
+        repeatableQuestCheckTimer += Time.deltaTime;
+        if (repeatableQuestCheckTimer > repeatableQuestCheckDelay)
         {
-            new Reward
+            repeatableQuestCheckTimer = 0f;
+            var elapsedQuests = SaveSystem.Data.RepeatableQuests.Where(x => !x.IsInCooldown()).ToList();
+            for (int i = 0; i < elapsedQuests.Count(); i++)
             {
-                Type = rewardType,
-                Count = count
-            } 
-        };
+                RactivateRepeatableQuest(elapsedQuests[i]);
+            }
+        }
+    }
 
+    public void AddNewQuestItem(Quest quest)
+    {
         //Add to save data
         SaveSystem.Instance.AddQuest(quest);
 
@@ -67,6 +73,15 @@ public class AppManager : MonoBehaviour
     public void EditQuestItem(Guid entryToEdit, Quest editedEntry)
     {
         SaveSystem.Instance.ModifyQuest(entryToEdit, editedEntry);
+
+        //Update UI scrollview with new element
+        var questsPanel = activePanel.GetComponent<QuestsPanel>();
+        questsPanel.RefreshQuests();
+    }
+
+    public void RactivateRepeatableQuest(Quest quest)
+    {
+        SaveSystem.Instance.ReactivateRepeatableQuest(quest);
 
         //Update UI scrollview with new element
         var questsPanel = activePanel.GetComponent<QuestsPanel>();

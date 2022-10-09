@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,11 +7,11 @@ using UnityEngine;
 public class QuestsPanel : MonoBehaviour
 {
     [SerializeField]
-    private GameObject layoutGroup;
-
+    private GameObject activeQuestsLayoutGroup;
+    [SerializeField]
+    private GameObject inactiveQuestsLayoutGroup;
     [SerializeField]
     private GameObject questsItemPrefab;
-
     [SerializeField]
     private GameObject backButton;
     [SerializeField]
@@ -23,12 +24,20 @@ public class QuestsPanel : MonoBehaviour
     public void RefreshQuests()
     {
         //Drop all child elements
-        DropLayoutGroupChildren();
+        DropLayoutGroupChildren(activeQuestsLayoutGroup);
+        DropLayoutGroupChildren(inactiveQuestsLayoutGroup);
 
-        //Recreate all elements of the quests panel scrollview from data
+        //Recreate all elements of the active quests panel scrollview from data
         foreach (var quest in SaveSystem.Data.ActiveQuests)
         {
-            var questItemButton = Instantiate(questsItemPrefab, layoutGroup.transform).GetComponent<QuestItemButton>();
+            var questItemButton = Instantiate(questsItemPrefab, activeQuestsLayoutGroup.transform).GetComponent<QuestItemButton>();
+            questItemButton.SetData(quest);
+        }
+
+        //Recreate all elements of the inactive quests panel scrollview from data
+        foreach (var quest in SaveSystem.Data.RepeatableQuests)
+        {
+            var questItemButton = Instantiate(questsItemPrefab, inactiveQuestsLayoutGroup.transform).GetComponent<QuestItemButton>();
             questItemButton.SetData(quest);
         }
     }
@@ -42,7 +51,6 @@ public class QuestsPanel : MonoBehaviour
     {
         var component = questSelectionPanel.GetComponent<QuestSelectionPanel>();
         component.Quest = quest;
-        component.SetTitle("Complete Quest '" + quest.Title + "'?");
     }
 
     public void SetFooterButtonsActive(bool value)
@@ -78,10 +86,10 @@ public class QuestsPanel : MonoBehaviour
 
     public void SetQuestItemsPanelActive(bool value)
     {
-        layoutGroup.SetActive(value);
+        activeQuestsLayoutGroup.SetActive(value);
     }
 
-    private void DropLayoutGroupChildren()
+    private void DropLayoutGroupChildren(GameObject layoutGroup)
     {
         int i = 0;
 

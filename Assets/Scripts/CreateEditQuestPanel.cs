@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,32 +15,26 @@ public class CreateEditQuestPanel : MonoBehaviour
 
     [SerializeField]
     private Text headerText;
-
     [SerializeField]
     private InputField titleInput;
-
     [SerializeField]
     private Dropdown rewardDropdown;
-
     [SerializeField]
     private InputField rewardCountInput;
-
     [SerializeField]
     private Button createButton;
-
     [SerializeField]
     private Button editButton;
-
-    //UI Elements to show
+    [SerializeField]
+    private Toggle isRepeatableToggle;
+    [SerializeField]
+    private CooldownEntry cooldownEntry;
     [SerializeField]
     private GameObject backButton;
-
     [SerializeField]
     private GameObject addNewQuestButton;
-
     [SerializeField]
     private GameObject questItemsGroup;
-
     [SerializeField]
     private QuestSelectionPanel questSelectionPanel;
 
@@ -53,6 +45,7 @@ public class CreateEditQuestPanel : MonoBehaviour
             headerText.text = "Create New Quest";
             titleInput.text = string.Empty;
             rewardCountInput.text = string.Empty;
+            isRepeatableToggle.isOn = false;
 
             createButton.gameObject.SetActive(true);
             editButton.gameObject.SetActive(false);
@@ -63,6 +56,12 @@ public class CreateEditQuestPanel : MonoBehaviour
             var selectedQuest = questSelectionPanel.Quest;
             titleInput.text = selectedQuest.Title;
             rewardCountInput.text = selectedQuest.Rewards[0].Count.ToString();
+            isRepeatableToggle.isOn = selectedQuest.IsRepeatable;
+
+            if (isRepeatableToggle.isOn) 
+            {
+                cooldownEntry.SetEntryValues((uint)selectedQuest.CooldownDuration.Days, (uint)selectedQuest.CooldownDuration.Hours);
+            }
 
             createButton.gameObject.SetActive(false);
             editButton.gameObject.SetActive(true);
@@ -87,24 +86,59 @@ public class CreateEditQuestPanel : MonoBehaviour
             return;
         }
 
+        if (isRepeatableToggle.isOn && !cooldownEntry.IsInputValid())
+        {
+            return;
+        }
+
         backButton.SetActive(true);
         addNewQuestButton.SetActive(true);
         questItemsGroup.SetActive(true);
         gameObject.SetActive(false);
 
-        AppManager.Instance.AddNewQuestItem(titleInput.text, RewardType.LuxuryToken, count);
+        //Create new quest
+        Quest quest = new Quest();
+        quest.Title = titleInput.text;
+        quest.Rewards = new Reward[]
+        {
+            new Reward
+            {
+                Type = RewardType.LuxuryToken,
+                Count = count
+            }
+        };
+        quest.IsRepeatable = isRepeatableToggle.isOn;
+
+        if (isRepeatableToggle.isOn) 
+        {
+            quest.CooldownDuration = cooldownEntry.GetCooldownTimeSpan();
+        }
+
+        AppManager.Instance.AddNewQuestItem(quest);
     }
 
     public void EditQuest()
     {
+        if (isRepeatableToggle.isOn && !cooldownEntry.IsInputValid())
+        {
+            return;
+        }
+
         backButton.SetActive(true);
         addNewQuestButton.SetActive(true);
         questItemsGroup.SetActive(true);
         gameObject.SetActive(false);
 
-        var quest = questSelectionPanel.Quest;
+        var quest = questSelectionPanel.Quest.DeepClone();
         quest.Title = titleInput.text;
         quest.Rewards[0].Count = int.Parse(rewardCountInput.text);
+        quest.IsRepeatable = isRepeatableToggle.isOn;
+
+        if (isRepeatableToggle.isOn)
+        {
+            quest.CooldownDuration = cooldownEntry.GetCooldownTimeSpan();
+        }
+
         AppManager.Instance.EditQuestItem(quest.Id, quest);
     }
 }

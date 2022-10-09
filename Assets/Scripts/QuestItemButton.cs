@@ -9,6 +9,8 @@ public class QuestItemButton : MonoBehaviour
     private Text titleText;
     [SerializeField]
     private LayoutGroup rewardsLayoutGroup;
+    [SerializeField]
+    private Text cooldownTimerText;
 
     //Prefab references
     [SerializeField]
@@ -18,12 +20,29 @@ public class QuestItemButton : MonoBehaviour
     private QuestsPanel questsPanel;
     private Quest quest;
 
+    private const string timerFormat = @"dd\:hh\:mm";
+
+    //Update once every minute
+    private float checkDelay = 60f;
+    private float checkTimer = 0f;
+
     private void Start()
     {
         if (Application.isPlaying) 
         {
             var gameObject = GameObject.Find("QuestsPanel");
             questsPanel = gameObject.GetComponent<QuestsPanel>();
+        }
+    }
+
+    private void Update()
+    {
+        //Set the update to only occur once a minute to save on processing.
+        checkTimer += Time.deltaTime;
+        if (checkTimer > checkDelay)
+        {
+            checkTimer = 0f;
+            UpdateCooldownTimer();
         }
     }
 
@@ -38,6 +57,12 @@ public class QuestItemButton : MonoBehaviour
         {
             Text rewardText = Instantiate(rewardTextElement, rewardsLayoutGroup.transform).GetComponent<Text>();
             rewardText.text = reward.Type.ToString() + " x" + reward.Count;
+        }
+
+        cooldownTimerText.gameObject.SetActive(quest.IsInCooldown());
+        if (quest.IsInCooldown()) 
+        {
+            cooldownTimerText.text = quest.GetElapsedCooldown().ToString(timerFormat);
         }
     }
 
@@ -69,5 +94,20 @@ public class QuestItemButton : MonoBehaviour
         {
             DestroyImmediate(child.gameObject);
         }
+    }
+
+    private void UpdateCooldownTimer()
+    {
+        if (quest == null)
+        {
+            return;
+        }
+
+        if (!quest.IsInCooldown())
+        {
+            return;
+        }
+
+        cooldownTimerText.text = quest.GetElapsedCooldown().ToString(timerFormat);
     }
 }

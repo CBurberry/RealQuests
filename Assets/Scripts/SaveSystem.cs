@@ -46,14 +46,53 @@ public class SaveSystem : MonoBehaviour
             return;
         }
 
-        var entry = Data.ActiveQuests.First(x => x.Id == entryToEdit);
+        IEnumerable<Quest> allQuests = Data.ActiveQuests.Concat(Data.RepeatableQuests);
+        var entry = allQuests.First(x => x.Id == entryToEdit);
+        bool shouldBeMovedToCompleted = entry.IsRepeatable && !editedEntry.IsRepeatable;
+        bool needsReactivation = entry.IsInCooldown() && editedEntry.IsRepeatable && !editedEntry.IsInCooldown();
         entry = editedEntry;
+
+        //If a repeatable quest is no longer repeatable and has already been completed, it should be removed.
+        if (shouldBeMovedToCompleted)
+        {
+            RemoveInactiveQuest(entry);
+        }
+        //If a repeatable quest has had it's cooldown reduced and is now active
+        else if (needsReactivation) 
+        {
+            ReactivateRepeatableQuest(entry);
+        }
+        else
+        {
+            Save();
+        }
+    }
+
+    public void ReactivateRepeatableQuest(Quest quest)
+    {
+        Data.RepeatableQuests.Remove(quest);
+        Data.ActiveQuests.Add(quest);
         Save();
     }
 
     public void RemoveQuest(Quest quest)
     {
+        if (quest.IsInCooldown()) 
+        {
+            RemoveInactiveQuest(quest);
+            return;
+        }
+
         Data.ActiveQuests.Remove(quest);
+        Save();
+    }
+
+    public void RemoveInactiveQuest(Quest quest)
+    {
+        //Note: We use deepcopy for the edit operation so Remove() does not actually remove the target by object equality.
+        var target = Data.RepeatableQuests.First(x => x.Id == quest.Id);
+        Data.RepeatableQuests.Remove(target);
+        Data.CompletedQuests.Add(quest);
         Save();
     }
 
@@ -108,7 +147,7 @@ public class SaveSystem : MonoBehaviour
         Save();
     }
 
-    public void Save()
+    private void Save()
     {
         string jsonData = JsonConvert.SerializeObject(Data, Formatting.Indented);
         File.WriteAllText(fullPath, jsonData);
@@ -149,11 +188,6 @@ public class SaveSystem : MonoBehaviour
         Data.OwnedRewards = new List<Reward>();
 
         //Save the new data so we have an initial copy in the filesystem
-        Save();
-    }
-
-    private void OnApplicationQuit()
-    {
         Save();
     }
 }
