@@ -40,38 +40,38 @@ public class SaveSystem : MonoBehaviour
         Save();
     }
 
-    public void ModifyQuest(Guid entryToEdit, Quest editedEntry)
+    public void ModifyQuest(Quest originalEntry, Quest editedEntry)
     {
-        if (editedEntry.Id != entryToEdit)
+        if (editedEntry.Id != originalEntry.Id)
         {
             return;
         }
 
-        IEnumerable<Quest> allQuests = Data.ActiveQuests.Concat(Data.RepeatableQuests);
-        var entry = allQuests.First(x => x.Id == entryToEdit);
-        bool shouldBeMovedToCompleted = entry.IsRepeatable && !editedEntry.IsRepeatable;
-        bool needsReactivation = entry.IsInCooldown() && editedEntry.IsRepeatable && !editedEntry.IsInCooldown();
-        entry = editedEntry;
+        bool shouldBeMovedToCompleted = originalEntry.IsRepeatable && !editedEntry.IsRepeatable;
+        bool needsReactivation = originalEntry.IsInCooldown() && editedEntry.IsRepeatable && !editedEntry.IsInCooldown();
 
         //If a repeatable quest is no longer repeatable and has already been completed, it should be removed.
         if (shouldBeMovedToCompleted)
         {
-            RemoveInactiveQuest(entry);
+            RemoveInactiveQuest(editedEntry);
         }
         //If a repeatable quest has had it's cooldown reduced and is now active
-        else if (needsReactivation) 
+        else if (needsReactivation)
         {
-            ReactivateRepeatableQuest(entry);
+            ReactivateRepeatableQuest(editedEntry);
         }
-        else
+        else 
         {
+            int index = Data.ActiveQuests.IndexOf(originalEntry);
+            Data.ActiveQuests[index] = editedEntry;
             Save();
         }
     }
 
     public void ReactivateRepeatableQuest(Quest quest)
     {
-        Data.RepeatableQuests.Remove(quest);
+        var target = Data.RepeatableQuests.First(x => x.Id == quest.Id);
+        Data.RepeatableQuests.Remove(target);
         Data.ActiveQuests.Add(quest);
         Save();
     }

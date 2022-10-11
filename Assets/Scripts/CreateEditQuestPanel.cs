@@ -139,6 +139,6 @@ public class CreateEditQuestPanel : MonoBehaviour
             quest.CooldownDuration = cooldownEntry.GetCooldownTimeSpan();
         }
 
-        AppManager.Instance.EditQuestItem(quest.Id, quest);
+        AppManager.Instance.EditQuestItem(questSelectionPanel.Quest, quest);
     }
 }

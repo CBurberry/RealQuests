@@ -70,9 +70,9 @@ public class AppManager : MonoBehaviour
         questsPanel.RefreshQuests();
     }
 
-    public void EditQuestItem(Guid entryToEdit, Quest editedEntry)
+    public void EditQuestItem(Quest originalEntry, Quest editedEntry)
     {
-        SaveSystem.Instance.ModifyQuest(entryToEdit, editedEntry);
+        SaveSystem.Instance.ModifyQuest(originalEntry, editedEntry);
 
         //Update UI scrollview with new element
         var questsPanel = activePanel.GetComponent<QuestsPanel>();
