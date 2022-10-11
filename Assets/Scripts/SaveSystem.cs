@@ -166,10 +166,8 @@ public class SaveSystem : MonoBehaviour
                 Data = JsonConvert.DeserializeObject<SaveData>(jsonData);
                 Debug.Log("Loaded save data from file.");
 
-                if (AreFieldsNullOrEmpty(Data)) 
-                {
-                    throw new InvalidDataException();
-                }
+                //A null reference exception is raised when attempting to access info of a null field, triggers data reset.
+                AreFieldsNullOrEmpty(Data);
             }
             catch (Exception ex)
             {
@@ -199,17 +197,17 @@ public class SaveSystem : MonoBehaviour
 
     private bool AreFieldsNullOrEmpty(SaveData data)
     {
-        bool result = true;
+        bool result = false;
 
         FieldInfo[] ps = data.GetType().GetFields();
 
         foreach (FieldInfo fi in ps)
         {
-            string value = fi.GetValue(Data).ToString();
+            string value = fi.GetValue(data).ToString();
 
             if (string.IsNullOrEmpty(value))
             {
-                result = false;
+                result = true;
                 break;
             }
         }
