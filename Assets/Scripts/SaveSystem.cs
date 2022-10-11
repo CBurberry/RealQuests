@@ -4,6 +4,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System.Reflection;
 
 public class SaveSystem : MonoBehaviour
 {
@@ -164,11 +165,16 @@ public class SaveSystem : MonoBehaviour
                 string jsonData = File.ReadAllText(fullPath);
                 Data = JsonConvert.DeserializeObject<SaveData>(jsonData);
                 Debug.Log("Loaded save data from file.");
+
+                if (AreFieldsNullOrEmpty(Data)) 
+                {
+                    throw new InvalidDataException();
+                }
             }
             catch (Exception ex)
             {
-                Debug.LogError("Error loading save data, creating new data...");
                 Debug.LogException(ex);
+                Debug.LogError("Error loading save data, creating new data...");
                 InitNewSaveData();
             }
         }
@@ -189,6 +195,26 @@ public class SaveSystem : MonoBehaviour
 
         //Save the new data so we have an initial copy in the filesystem
         Save();
+    }
+
+    private bool AreFieldsNullOrEmpty(SaveData data)
+    {
+        bool result = true;
+
+        FieldInfo[] ps = data.GetType().GetFields();
+
+        foreach (FieldInfo fi in ps)
+        {
+            string value = fi.GetValue(Data).ToString();
+
+            if (string.IsNullOrEmpty(value))
+            {
+                result = false;
+                break;
+            }
+        }
+
+        return result;
     }
 }
 
