@@ -48,7 +48,7 @@ public class SaveSystem : MonoBehaviour
         }
 
         bool shouldBeMovedToCompleted = originalEntry.IsRepeatable && !editedEntry.IsRepeatable;
-        bool needsReactivation = originalEntry.IsInCooldown() && editedEntry.IsRepeatable && !editedEntry.IsInCooldown();
+        bool needsReactivation = originalEntry.HasCooldownElapsed() && editedEntry.IsRepeatable && !editedEntry.HasCooldownElapsed();
 
         //If a repeatable quest is no longer repeatable and has already been completed, it should be removed.
         if (shouldBeMovedToCompleted)
@@ -62,7 +62,7 @@ public class SaveSystem : MonoBehaviour
         }
         else 
         {
-            if (originalEntry.IsInCooldown())
+            if (originalEntry.HasCooldownElapsed())
             {
                 int index = Data.RepeatableQuests.IndexOf(originalEntry);
                 Data.RepeatableQuests[index] = editedEntry;
@@ -79,7 +79,14 @@ public class SaveSystem : MonoBehaviour
 
     public void ReactivateRepeatableQuest(Quest quest)
     {
-        var target = Data.RepeatableQuests.First(x => x.Id == quest.Id);
+        var target = Data.RepeatableQuests.FirstOrDefault(x => x.Id == quest.Id);
+        if (target == null) 
+        {
+            //The quest may have since been moved when the call was made.
+            //TODO: Improve as we should not be encountering this.
+            return;
+        }
+
         Data.RepeatableQuests.Remove(target);
         Data.ActiveQuests.Add(quest);
         Save();
@@ -87,7 +94,7 @@ public class SaveSystem : MonoBehaviour
 
     public void RemoveQuest(Quest quest)
     {
-        if (quest.IsInCooldown()) 
+        if (quest.HasCooldownElapsed()) 
         {
             RemoveInactiveQuest(quest);
             return;

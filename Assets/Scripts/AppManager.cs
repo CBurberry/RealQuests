@@ -21,10 +21,6 @@ public class AppManager : MonoBehaviour
 
     private GameObject activePanel;
 
-    //Check for repeatable quests cooldowns once every minute.
-    private float repeatableQuestCheckDelay = 60f;
-    private float repeatableQuestCheckTimer = 0f;
-
     //Singleton pattern
     private void Awake()
     {
@@ -44,20 +40,6 @@ public class AppManager : MonoBehaviour
     private void Start()
     {
         SetPanelActive(0);
-    }
-
-    private void Update()
-    {
-        repeatableQuestCheckTimer += Time.deltaTime;
-        if (repeatableQuestCheckTimer > repeatableQuestCheckDelay)
-        {
-            repeatableQuestCheckTimer = 0f;
-            var elapsedQuests = SaveSystem.Data.RepeatableQuests.Where(x => !x.IsInCooldown()).ToList();
-            for (int i = 0; i < elapsedQuests.Count(); i++)
-            {
-                RactivateRepeatableQuest(elapsedQuests[i]);
-            }
-        }
     }
 
     public void AddNewQuestItem(Quest quest)
@@ -81,6 +63,7 @@ public class AppManager : MonoBehaviour
 
     public void RactivateRepeatableQuest(Quest quest)
     {
+        quest.IsCooldownActive = false;
         SaveSystem.Instance.ReactivateRepeatableQuest(quest);
 
         //Update UI scrollview with new element

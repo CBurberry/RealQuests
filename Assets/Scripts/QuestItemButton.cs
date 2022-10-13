@@ -22,8 +22,8 @@ public class QuestItemButton : MonoBehaviour
 
     private const string timerFormat = @"dd\:hh\:mm";
 
-    //Update once every minute
-    private float checkDelay = 60f;
+    //Update once every half minute
+    private float checkDelay = 30f;
     private float checkTimer = 0f;
 
     private void Start()
@@ -37,12 +37,18 @@ public class QuestItemButton : MonoBehaviour
 
     private void Update()
     {
+        if (quest.IsCooldownActive == false) 
+        {
+            return;
+        }
+
         //Set the update to only occur once a minute to save on processing.
         checkTimer += Time.deltaTime;
         if (checkTimer > checkDelay)
         {
             checkTimer = 0f;
             UpdateCooldownTimer();
+            CheckCooldownComplete();
         }
     }
 
@@ -59,8 +65,8 @@ public class QuestItemButton : MonoBehaviour
             rewardText.text = reward.Type.ToString() + " x" + reward.Count;
         }
 
-        cooldownTimerText.gameObject.SetActive(quest.IsInCooldown());
-        if (quest.IsInCooldown()) 
+        cooldownTimerText.gameObject.SetActive(quest.HasCooldownElapsed());
+        if (quest.HasCooldownElapsed()) 
         {
             cooldownTimerText.text = quest.GetElapsedCooldown().ToString(timerFormat);
         }
@@ -104,11 +110,19 @@ public class QuestItemButton : MonoBehaviour
             return;
         }
 
-        if (!quest.IsInCooldown())
+        if (!quest.HasCooldownElapsed())
         {
             return;
         }
 
         cooldownTimerText.text = quest.GetElapsedCooldown().ToString(timerFormat);
+    }
+
+    private void CheckCooldownComplete()
+    {
+        if (quest.IsRepeatable && !quest.HasCooldownElapsed()) 
+        {
+            AppManager.Instance.RactivateRepeatableQuest(quest);
+        }
     }
 }

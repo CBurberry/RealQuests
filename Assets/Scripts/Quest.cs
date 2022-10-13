@@ -8,6 +8,7 @@ public class Quest
     public string Title;
     public Reward[] Rewards;
     public bool IsRepeatable;
+    public bool IsCooldownActive;
 
     //Cooldown
     public DateTime LastCompleted;
@@ -18,11 +19,12 @@ public class Quest
         Id = Guid.NewGuid();
         Completions = 0;
         IsRepeatable = false;
+        IsCooldownActive = false;
     }
 
-    public bool IsInCooldown()
+    public bool HasCooldownElapsed()
     {
-        return IsRepeatable && DateTime.Now < (LastCompleted + CooldownDuration);
+        return IsCooldownActive && DateTime.Now < (LastCompleted + CooldownDuration);
     }
 
     public TimeSpan GetElapsedCooldown()

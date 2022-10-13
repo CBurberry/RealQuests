@@ -30,7 +30,7 @@ public class QuestSelectionPanel : MonoBehaviour
 
     private void OnEnable()
     {
-        if (Quest.IsInCooldown())
+        if (Quest.HasCooldownElapsed())
         {
             titleText.text = "Modify/Delete Quest '" + Quest.Title + "'?";
         }
@@ -39,7 +39,7 @@ public class QuestSelectionPanel : MonoBehaviour
             titleText.text = "Complete Quest '" + Quest.Title + "'?";
         }
 
-        completeButton.gameObject.SetActive(!Quest.IsInCooldown());
+        completeButton.gameObject.SetActive(!Quest.HasCooldownElapsed());
     }
 
     public void CompleteQuest()
@@ -58,6 +58,7 @@ public class QuestSelectionPanel : MonoBehaviour
         else 
         {
             Quest.LastCompleted = DateTime.Now;
+            Quest.IsCooldownActive = true;
             SaveSystem.Data.RepeatableQuests.Add(Quest);
         }
 
