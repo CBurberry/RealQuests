@@ -34,7 +34,7 @@ public class CreateEditQuestPanel : MonoBehaviour
     [SerializeField]
     private GameObject addNewQuestButton;
     [SerializeField]
-    private GameObject questItemsGroup;
+    private QuestsPanel questsPanel;
     [SerializeField]
     private QuestSelectionPanel questSelectionPanel;
 
@@ -93,7 +93,8 @@ public class CreateEditQuestPanel : MonoBehaviour
 
         backButton.SetActive(true);
         addNewQuestButton.SetActive(true);
-        questItemsGroup.SetActive(true);
+        questsPanel.SetActiveQuestItemsPanelActive(true);
+        questsPanel.SetInactiveQuestItemsPanelActive(true);
         gameObject.SetActive(false);
 
         //Create new quest
@@ -126,7 +127,8 @@ public class CreateEditQuestPanel : MonoBehaviour
 
         backButton.SetActive(true);
         addNewQuestButton.SetActive(true);
-        questItemsGroup.SetActive(true);
+        questsPanel.SetActiveQuestItemsPanelActive(true);
+        questsPanel.SetInactiveQuestItemsPanelActive(true);
         gameObject.SetActive(false);
 
         var quest = questSelectionPanel.Quest.DeepClone();

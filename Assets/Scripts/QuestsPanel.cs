@@ -84,9 +84,14 @@ public class QuestsPanel : MonoBehaviour
         questSelectionPanel.SetActive(value);
     }
 
-    public void SetQuestItemsPanelActive(bool value)
+    public void SetActiveQuestItemsPanelActive(bool value)
     {
         activeQuestsLayoutGroup.SetActive(value);
+    }
+
+    public void SetInactiveQuestItemsPanelActive(bool value)
+    {
+        inactiveQuestsLayoutGroup.SetActive(value);
     }
 
     private void DropLayoutGroupChildren(GameObject layoutGroup)

@@ -18,9 +18,6 @@ public class QuestSelectionPanel : MonoBehaviour
     private GameObject addNewQuestButton;
 
     [SerializeField]
-    private GameObject questItemsGroup;
-
-    [SerializeField]
     private Text titleText;
 
     //References
@@ -93,7 +90,8 @@ public class QuestSelectionPanel : MonoBehaviour
         //Set visibilities
         backButton.SetActive(true);
         addNewQuestButton.SetActive(true);
-        questItemsGroup.SetActive(true);
+        questsPanel.SetActiveQuestItemsPanelActive(true);
+        questsPanel.SetInactiveQuestItemsPanelActive(true);
         gameObject.SetActive(false);
     }
 }

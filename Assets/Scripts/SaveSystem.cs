@@ -62,8 +62,17 @@ public class SaveSystem : MonoBehaviour
         }
         else 
         {
-            int index = Data.ActiveQuests.IndexOf(originalEntry);
-            Data.ActiveQuests[index] = editedEntry;
+            if (originalEntry.IsInCooldown())
+            {
+                int index = Data.RepeatableQuests.IndexOf(originalEntry);
+                Data.RepeatableQuests[index] = editedEntry;
+            }
+            else 
+            {
+                int index = Data.ActiveQuests.IndexOf(originalEntry);
+                Data.ActiveQuests[index] = editedEntry;
+            }
+            
             Save();
         }
     }

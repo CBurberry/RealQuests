@@ -70,7 +70,8 @@ public class QuestItemButton : MonoBehaviour
     {
         questsPanel.SetSelectedQuest(quest);
         questsPanel.SetFooterButtonsActive(false);
-        questsPanel.SetQuestItemsPanelActive(false);
+        questsPanel.SetActiveQuestItemsPanelActive(false);
+        questsPanel.SetInactiveQuestItemsPanelActive(false);
         questsPanel.SetQuestSelectionPanelActive(true);
     }
 
