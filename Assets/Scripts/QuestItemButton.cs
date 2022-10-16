@@ -22,33 +22,12 @@ public class QuestItemButton : MonoBehaviour
 
     private const string timerFormat = @"dd\:hh\:mm";
 
-    //Update once every half minute
-    private float checkDelay = 30f;
-    private float checkTimer = 0f;
-
     private void Start()
     {
         if (Application.isPlaying) 
         {
             var gameObject = GameObject.Find("QuestsPanel");
             questsPanel = gameObject.GetComponent<QuestsPanel>();
-        }
-    }
-
-    private void Update()
-    {
-        if (quest.IsCooldownActive == false) 
-        {
-            return;
-        }
-
-        //Set the update to only occur once a minute to save on processing.
-        checkTimer += Time.deltaTime;
-        if (checkTimer > checkDelay)
-        {
-            checkTimer = 0f;
-            UpdateCooldownTimer();
-            CheckCooldownComplete();
         }
     }
 
@@ -103,7 +82,7 @@ public class QuestItemButton : MonoBehaviour
         }
     }
 
-    private void UpdateCooldownTimer()
+    public void UpdateCooldownTimer()
     {
         if (quest == null)
         {
@@ -118,7 +97,7 @@ public class QuestItemButton : MonoBehaviour
         cooldownTimerText.text = quest.GetElapsedCooldown().ToString(timerFormat);
     }
 
-    private void CheckCooldownComplete()
+    public void CheckCooldownComplete()
     {
         if (quest.IsRepeatable && !quest.HasCooldownElapsed()) 
         {

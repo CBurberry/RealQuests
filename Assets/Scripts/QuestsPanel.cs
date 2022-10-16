@@ -21,6 +21,25 @@ public class QuestsPanel : MonoBehaviour
     [SerializeField]
     private GameObject questSelectionPanel;
 
+    //Update once every minute
+    private float checkDelay = 60f;
+    private float checkTimer = 0f;
+
+    private void Update()
+    {
+        //Set the update to only occur once a minute to save on processing.
+        checkTimer += Time.deltaTime;
+        if (checkTimer > checkDelay)
+        {
+            checkTimer = 0f;
+            foreach (var item in inactiveQuestsLayoutGroup.GetComponentsInChildren<QuestItemButton>()) 
+            {
+                item.UpdateCooldownTimer();
+                item.CheckCooldownComplete();
+            }
+        }
+    }
+
     public void RefreshQuests()
     {
         //Drop all child elements
